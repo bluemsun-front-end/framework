@@ -175,7 +175,7 @@ const handleLogout = async () => {
 .menu-item {
   font-weight:700;
   font-size: 14px;
-  /* color: #bdc3c7;  */
+  color: #bdc3c7; 
   padding-left: 20px;
   background-color: #283142; /* 默认背景透明，与侧边栏背景一致 */
   transition:
