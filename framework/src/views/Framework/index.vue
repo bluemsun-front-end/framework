@@ -111,8 +111,8 @@ const handleMenuClick = (page: string) => {
     else window.location.href = `http://localhost:5174/manage?token=${token}}`
   }
   else if (page == 'personalProfile') {
-    if(currentRole.value == '资助对象')window.location.href = `http://localhost:5174/new-file?token=${token}`
-    else window.location.href = `http://localhost:5174/studentFiles?token=${token}`
+    if(currentRole.value == '资助对象')window.location.href = `http://localhost:5175/new-file?token=${token}`
+    else window.location.href = `http://localhost:5175/studentFiles?token=${token}`
   }
 }
 
