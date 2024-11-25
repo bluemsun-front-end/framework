@@ -1,11 +1,12 @@
 <template>
   <div class="tab-container">
-    <el-tabs v-model="activeTab" class="custom-tabs" type="card" @tab-click="handleTabClick">
-      <el-tab-pane label="基本信息" name="tab1">
+    <el-tabs v-model="activeTab" class="custom-tabs" type="card">
+      <el-tab-pane v-if="role === '资助对象'" label="基本信息" name="tab1">
         <div class="tab-content">
           <information-form></information-form>
         </div>
       </el-tab-pane>
+      
       <el-tab-pane label="修改密码" name="tab2">
         <div class="tab-content">
           <password-form></password-form>
@@ -16,22 +17,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import InformationForm from './InformationForm.vue'
 import PasswordForm from './PasswordForm.vue'
 
-const activeTab = ref('tab1')
-
-const handleTabClick = (tab) => {
-  console.log(`You clicked on ${tab.label}`)
-}
+const props = defineProps({
+  message: String
+})
+const role = ref(props.message)
+const activeTab = ref(role === '资助对象' ? 'tab1' : 'tab2')
+watch(() => props.message, (newMessage) => {
+  role.value = newMessage
+  activeTab.value = role.value === '资助对象' ? 'tab1' : 'tab2'
+})
 </script>
 
 <style scoped>
 /* Tab 整体容器 */
 .tab-container {
   max-width: 744px;
-  margin: 0 20px 0 20px;
+  margin: 0 20px;
   padding: 20px;
   background-color: white;
   border-radius: 15px;
@@ -41,30 +46,27 @@ const handleTabClick = (tab) => {
 /* 自定义 Tab 栏样式 */
 :deep(.custom-tabs .el-tabs__header) {
   padding: 6px;
-  padding-bottom: 0px; /* 调整底部间距 */
+  padding-bottom: 0px;
 }
 
 :deep(.custom-tabs .el-tabs__item) {
   font-weight: bold;
-  color: #000; /* 默认文字颜色为黑色 */
+  color: #000;
   padding: 12px 20px;
   background-color: transparent;
   transition: all 0.3s ease;
 }
 
-/* Tab 项的 hover 状态 */
 :deep(.custom-tabs .el-tabs__item:hover) {
-  background-color: rgba(0, 123, 255, 0.1); /* 鼠标悬浮时背景色 */
+  background-color: rgba(0, 123, 255, 0.1);
   cursor: pointer;
 }
 
-/* 激活状态的 Tab 样式 */
 :deep(.custom-tabs .el-tabs__item.is-active) {
   background-color: #5ab2ecf7;
-  color: #fff; 
+  color: #fff;
 }
 
-/* 去掉底部边框 */
 :deep(.custom-tabs .el-tabs__nav) {
   border-bottom: none;
 }

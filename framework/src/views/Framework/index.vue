@@ -5,7 +5,7 @@
       <el-scrollbar style="height: 100%">
         <el-menu :default-active="activeMenu" :default-openeds="['1']" class="sidebar-menu">
           <!-- 侧边栏标题 -->
-          <div index="0" class="sidebar-title" disabled>资助对象-导航</div>
+          <div index="0" class="sidebar-title" disabled>{{currentRole}}-导航</div>
 
           <!-- 个人中心 -->
           <el-menu-item
@@ -18,7 +18,7 @@
 
           <!-- 爱心超市 -->
           <el-menu-item
-            v-show="currentRole != '资助中心老师'"
+            v-show="currentRole == '资助对象'|| currentRole == '超级管理员'"
             index="2"
             @click="handleMenuClick('superMarket')"
             :class="{ active: currentPage === 'superMarket' }"
@@ -26,20 +26,41 @@
           >
             爱心超市
           </el-menu-item>
+          <!-- 超市管理员 -->
+          <el-menu-item
+            v-show="currentRole == '超市管理员'||currentRole == '超级管理员'"
+            index="3"
+            @click="handleMenuClick('superMarketManage')"
+            :class="{ active: currentPage === 'superMarketManage' }"
+            class="menu-item"
+          >
+            爱心超市管理员
+          </el-menu-item>
 
           <!-- 个人档案 -->
           <el-menu-item
-            v-show="currentRole != '超市管理员'"
-            index="3"
+            v-show="currentRole == '资助对象'||currentRole == '超级管理员'"
+            index="4"
             @click="handleMenuClick('personalProfile')"
             :class="{ active: currentPage === 'personalProfile' }"
             class="menu-item"
           >
             个人档案
           </el-menu-item>
+          
+          <!-- 个人档案管理员端 -->
+          <el-menu-item
+            v-show="currentRole == '老师'||currentRole == '超级管理员'"
+            index="5"
+            @click="handleMenuClick('studentsProfile')"
+            :class="{ active: currentPage === 'studentsProfile' }"
+            class="menu-item"
+          >
+            学生档案
+          </el-menu-item>
 
           <!-- 退出登录 -->
-          <el-menu-item index="4" plain @click="outerVisible = true" class="logout-button">
+          <el-menu-item index="6" plain @click="outerVisible = true" class="logout-button">
             退出登录
           </el-menu-item>
         </el-menu>
@@ -57,7 +78,7 @@
         <div v-if="currentPage === 'personalCenter'" class="content">
           <!-- 监听子组件发出的 'role' 事件 -->
           <personal-box @role="updateRole"></personal-box>
-          <personal-text></personal-text>
+          <personal-text :message="roleMessage"></personal-text>
         </div>
       </el-main>
     </el-container>
@@ -87,6 +108,9 @@ import axios from 'axios' // 导入 axios 库
 import PersonalBox from '@/views/Framework/components/PersonalBox.vue' // 导入 PersonalBox 组件
 import PersonalText from '@/views/Framework/components/PersonalText.vue'
 
+// 父组件的消息
+const roleMessage = ref('')
+
 const token = localStorage.getItem('token')
 
 // 模态框
@@ -101,19 +125,20 @@ const currentRole = ref('')
 // 监听子组件传递的角色信息
 const updateRole = (role: string) => {
   currentRole.value = role
+  roleMessage.value = role
   console.log('接收到角色信息:', role)
 }
 
 // 点击菜单项时的处理函数
 const handleMenuClick = (page: string) => {
   if (page == 'superMarket'){
-    if(currentRole.value == '资助对象') window.location.href = `http://localhost:5174/home?token=${token}}`
-    else window.location.href = `http://localhost:5174/manage?token=${token}}`
+    window.location.href = `http://localhost:5174/home?token=${token}}`
   }
   else if (page == 'personalProfile') {
-    if(currentRole.value == '资助对象')window.location.href = `http://localhost:5175/new-file?token=${token}`
-    else window.location.href = `http://localhost:5175/studentFiles?token=${token}`
+    window.location.href = `http://localhost:5175/new-file?token=${token}`
   }
+  else if(page == 'studentsProfile')window.location.href = `http://localhost:5175/studentFiles?token=${token}`
+  else if(page == 'superMarketManage')window.location.href = `http://localhost:5174/manage?token=${token}}`
 }
 
 // 模态框关闭时执行的回调
@@ -147,6 +172,14 @@ const handleLogout = async () => {
     ElMessage.error('请求失败！')
   }
 }
+// 页面关闭删除token
+import { onBeforeUnmount} from 'vue';
+onBeforeUnmount(() => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('client_id')
+  console.log('Token has been removed from localStorage');
+});
+
 </script>
 
 <style scoped>
