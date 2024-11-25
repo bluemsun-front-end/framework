@@ -18,6 +18,7 @@
 
           <!-- 爱心超市 -->
           <el-menu-item
+            v-show="currentRole != '资助中心老师'"
             index="2"
             @click="handleMenuClick('superMarket')"
             :class="{ active: currentPage === 'superMarket' }"
@@ -28,6 +29,7 @@
 
           <!-- 个人档案 -->
           <el-menu-item
+            v-show="currentRole != '超市管理员'"
             index="3"
             @click="handleMenuClick('personalProfile')"
             :class="{ active: currentPage === 'personalProfile' }"
@@ -52,31 +54,31 @@
 
       <!-- 主内容区 -->
       <el-main>
-        <div v-if="currentPage === 'personalCenter'" class="content" style="display: flex">
-          <personal-box></personal-box>
+        <div v-if="currentPage === 'personalCenter'" class="content">
+          <!-- 监听子组件发出的 'role' 事件 -->
+          <personal-box @role="updateRole"></personal-box>
           <personal-text></personal-text>
         </div>
       </el-main>
     </el-container>
   </el-container>
-  <!-- 模态框 -->
+
   <!-- 退出登录确认模态框 -->
   <el-dialog v-model="outerVisible" title="" width="450px" :before-close="handleBeforeClose">
-  <div class="dialog-content">
-    <span>确认退出登录吗？</span>
-  </div>
-  <template #footer>
-    <div class="dialog-footer">
-      <el-button @click="outerVisible = false" class="cancel-btn">取消</el-button>
-      <el-button type="primary" @click="handleLogout" class="confirm-btn">
-        确认退出
-      </el-button>
+    <div class="dialog-content">
+      <span>确认退出登录吗？</span>
     </div>
-  </template>
-</el-dialog>
-
-
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="outerVisible = false" class="cancel-btn">取消</el-button>
+        <el-button type="primary" @click="handleLogout" class="confirm-btn">
+          确认退出
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
+
 
 <script lang="ts" setup>
 import { ref } from 'vue'
@@ -84,18 +86,36 @@ import { ElMessage } from 'element-plus' // 导入 ElMessage 组件
 import axios from 'axios' // 导入 axios 库
 import PersonalBox from '@/views/Framework/components/PersonalBox.vue' // 导入 PersonalBox 组件
 import PersonalText from '@/views/Framework/components/PersonalText.vue'
+
 const token = localStorage.getItem('token')
+
 // 模态框
 const outerVisible = ref(false)
 // 当前选中的菜单项
 const activeMenu = ref('1') // 默认选中 "个人中心"
 const currentPage = ref('personalCenter') // 默认显示 个人中心
 
-// 点击菜单项时的处理函数
-const handleMenuClick = (page:string) => {
-  if(page=='superMarket')window.location.href = 'http://localhost:5175/home'
-  else if(page=='personalProfile')window.location.href = 'http://localhost:5173/growthfile'
+// 当前用户角色
+const currentRole = ref('')
+
+// 监听子组件传递的角色信息
+const updateRole = (role: string) => {
+  currentRole.value = role
+  console.log('接收到角色信息:', role)
 }
+
+// 点击菜单项时的处理函数
+const handleMenuClick = (page: string) => {
+  if (page == 'superMarket'){
+    if(currentRole.value == '资助对象') window.location.href = `http://localhost:5174/home?token=${token}}`
+    else window.location.href = `http://localhost:5174/manage?token=${token}}`
+  }
+  else if (page == 'personalProfile') {
+    if(currentRole.value == '资助对象')window.location.href = `http://localhost:5174/new-file?token=${token}`
+    else window.location.href = `http://localhost:5174/studentFiles?token=${token}`
+  }
+}
+
 // 模态框关闭时执行的回调
 const handleBeforeClose = (done: Function) => {
   done() // 关闭模态框
@@ -108,28 +128,31 @@ const handleLogout = async () => {
     const response = await axios.post('http://106.54.24.243:8080/auth/logout', {
       headers: {
         Authorization: `Bearer ${token}`,
-        clientid:'e5cd7e4891bf95d1d19206ce24a7b32e',
+        clientid: 'e5cd7e4891bf95d1d19206ce24a7b32e',
       },
     })
     if (response.data.code === 200) {
-      ElMessage.success('退出成功！');
-      outerVisible.value = false 
-      localStorage.removeItem('token') 
+      ElMessage.success('退出成功！')
+      outerVisible.value = false
+      localStorage.removeItem('token')
       // 等待2秒跳转到登录
-       setTimeout(() => {
-         window.location.href = '/' 
-          outerVisible.value = false
-       }, 500);
+      setTimeout(() => {
+        window.location.href = '/'
+        outerVisible.value = false
+      }, 500)
     } else {
-      ElMessage.error(response.data.msg+'!');
+      ElMessage.error(response.data.msg + '!')
     }
   } catch (error) {
-    ElMessage.error('请求失败！');
+    ElMessage.error('请求失败！')
   }
 }
 </script>
 
 <style scoped>
+.content{
+  display: flex;
+}
 /* 顶部导航栏 */
 .layout-container-demo .el-header {
   background-color: white;
@@ -223,7 +246,6 @@ const handleLogout = async () => {
   padding: 20px;
   background-color: #f4f4f4; /* 浅灰色背景 */
 }
-
 /* 工具栏 */
 .layout-container-demo .toolbar {
   display: flex;

@@ -31,7 +31,7 @@ const handleTabClick = (tab) => {
 /* Tab 整体容器 */
 .tab-container {
   max-width: 744px;
-  margin: 0 auto;
+  margin: 0 20px 0 20px;
   padding: 20px;
   background-color: white;
   border-radius: 15px;

@@ -94,11 +94,7 @@ const log = async () => {
       localStorage.setItem('client_id',response.data.data.client_id)
 
       // 判断对象
-      if (response.data.data.roles[0].roleName === '资助对象') router.push('/framework')
-      //路由跳转到首页
-      else router.push('/studentFiles')
-    } else {
-      ElMessage.error('用户名或密码错误')
+      router.push('/framework')
     }
   } catch (error) {
     loading.value = false

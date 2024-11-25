@@ -68,6 +68,9 @@ import axios from 'axios'
 import { onMounted } from 'vue'
 import { reactive, toRefs } from 'vue'
 import { ElMessage } from 'element-plus'
+import { defineEmits } from 'vue'
+const emit = defineEmits(['role'])
+
 
 const state = reactive({
   circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
@@ -110,6 +113,10 @@ const fetchUserInfo = async () => {
     role.value = data.value.roles[0].roleName || '未知'
     phonenumber.value = data.value.phonenumber || '未知'
     email.value = data.value.email || '未知'
+    // 把role传递给父组件
+    console.log(data.value.roles[0].roleName);
+    emit('role', data.value.roles[0].roleName||'未知')
+
   } catch (error) {
     console.error('获取用户信息失败', error)
   }
