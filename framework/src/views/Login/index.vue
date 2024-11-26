@@ -93,6 +93,8 @@ const log = async () => {
       localStorage.setItem('token', response.data.data.access_token)
       localStorage.setItem('client_id',response.data.data.client_id)
 
+      localStorage.setItem('role',response.data.data.roles[0].roleName)
+
       // 判断对象
       router.push('/framework')
     }

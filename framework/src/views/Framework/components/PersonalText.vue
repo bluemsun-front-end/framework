@@ -21,15 +21,16 @@ import { ref, watch } from 'vue'
 import InformationForm from './InformationForm.vue'
 import PasswordForm from './PasswordForm.vue'
 
-const props = defineProps({
-  message: String
-})
-const role = ref(props.message)
+// const props = defineProps({
+//   message: String
+// })
+// const role = ref(props.message)
+const role = localStorage.getItem('role')
 const activeTab = ref(role === '资助对象' ? 'tab1' : 'tab2')
-watch(() => props.message, (newMessage) => {
-  role.value = newMessage
-  activeTab.value = role.value === '资助对象' ? 'tab1' : 'tab2'
-})
+// watch(() => props.message, (newMessage) => {
+//   role.value = newMessage
+//   activeTab.value = role.value === '资助对象' ? 'tab1' : 'tab2'
+// })
 </script>
 
 <style scoped>

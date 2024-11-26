@@ -77,8 +77,10 @@
       <el-main>
         <div v-if="currentPage === 'personalCenter'" class="content">
           <!-- 监听子组件发出的 'role' 事件 -->
-          <personal-box @role="updateRole"></personal-box>
-          <personal-text :message="roleMessage"></personal-text>
+          <!-- <personal-box @role="updateRole"></personal-box>
+          <personal-text :message="roleMessage"></personal-text> -->
+          <personal-box></personal-box>
+          <personal-text></personal-text>
         </div>
       </el-main>
     </el-container>
@@ -109,7 +111,7 @@ import PersonalBox from '@/views/Framework/components/PersonalBox.vue' // 导入
 import PersonalText from '@/views/Framework/components/PersonalText.vue'
 
 // 父组件的消息
-const roleMessage = ref('')
+// const roleMessage = ref('')
 
 const token = localStorage.getItem('token')
 
@@ -120,14 +122,14 @@ const activeMenu = ref('1') // 默认选中 "个人中心"
 const currentPage = ref('personalCenter') // 默认显示 个人中心
 
 // 当前用户角色
-const currentRole = ref('')
-
+// const currentRole = ref('')
+const currentRole = localStorage.getItem('role');
 // 监听子组件传递的角色信息
-const updateRole = (role: string) => {
-  currentRole.value = role
-  roleMessage.value = role
-  console.log('接收到角色信息:', role)
-}
+// const updateRole = (role: string) => {
+//   currentRole.value = role
+//   roleMessage.value = role
+//   console.log('接收到角色信息:', role)
+// }
 
 // 点击菜单项时的处理函数
 const handleMenuClick = (page: string) => {
@@ -160,6 +162,8 @@ const handleLogout = async () => {
       ElMessage.success('退出成功！')
       outerVisible.value = false
       localStorage.removeItem('token')
+      localStorage.removeItem('role')
+      localStorage.removeItem('client_id')
       // 等待2秒跳转到登录
       setTimeout(() => {
         window.location.href = '/'
