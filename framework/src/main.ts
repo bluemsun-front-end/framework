@@ -8,8 +8,15 @@ import App from './App.vue'
 // 加
 import './assets/iconfont/iconfont.css'
 
+
+
+
 const app = createApp(App)
-const pinia = createPinia()
+const pinia = createPinia()   
+
+
+  
+
 app.use(ElementPlus, { locale: zhCn })
 // 路由
 app.use(router)

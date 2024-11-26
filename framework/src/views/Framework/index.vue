@@ -1,3 +1,4 @@
+
 <template>
   <el-container class="layout-container-demo" style="height: 100vh">
     <!-- 左侧边栏 -->
@@ -5,7 +6,7 @@
       <el-scrollbar style="height: 100%">
         <el-menu :default-active="activeMenu" :default-openeds="['1']" class="sidebar-menu">
           <!-- 侧边栏标题 -->
-          <div index="0" class="sidebar-title" disabled>资助对象-导航</div>
+          <div index="0" class="sidebar-title" disabled>{{role}}-导航</div>
 
           <!-- 个人中心 -->
           <el-menu-item
@@ -18,6 +19,7 @@
 
           <!-- 爱心超市 -->
           <el-menu-item
+            v-show=" role == '资助对象'|| role == '超级管理员'"
             index="2"
             @click="handleMenuClick('superMarket')"
             :class="{ active: currentPage === 'superMarket' }"
@@ -25,19 +27,41 @@
           >
             爱心超市
           </el-menu-item>
+          <!-- 超市管理员 -->
+          <el-menu-item
+            v-show="  role == '超市管理员'|| role == '超级管理员'"
+            index="3"
+            @click="handleMenuClick('superMarketManage')"
+            :class="{ active: currentPage === 'superMarketManage' }"
+            class="menu-item"
+          >
+            爱心超市管理员
+          </el-menu-item>
 
           <!-- 个人档案 -->
           <el-menu-item
-            index="3"
+            v-show="role == '资助对象'|| role == '超级管理员'"
+            index="4"
             @click="handleMenuClick('personalProfile')"
             :class="{ active: currentPage === 'personalProfile' }"
             class="menu-item"
           >
             个人档案
           </el-menu-item>
+          
+          <!-- 个人档案管理员端 -->
+          <el-menu-item
+            v-show=" role == '老师'|| role == '超级管理员'"
+            index="5"
+            @click="handleMenuClick('studentsProfile')"
+            :class="{ active: currentPage === 'studentsProfile' }"
+            class="menu-item"
+          >
+            学生档案
+          </el-menu-item>
 
           <!-- 退出登录 -->
-          <el-menu-item index="4" plain @click="outerVisible = true" class="logout-button">
+          <el-menu-item index="6" plain @click="outerVisible = true" class="logout-button">
             退出登录
           </el-menu-item>
         </el-menu>
@@ -52,31 +76,31 @@
 
       <!-- 主内容区 -->
       <el-main>
-        <div v-if="currentPage === 'personalCenter'" class="content" style="display: flex">
+        <div v-if="currentPage === 'personalCenter'" class="content">
+    
           <personal-box></personal-box>
           <personal-text></personal-text>
         </div>
       </el-main>
     </el-container>
   </el-container>
-  <!-- 模态框 -->
+
   <!-- 退出登录确认模态框 -->
   <el-dialog v-model="outerVisible" title="" width="450px" :before-close="handleBeforeClose">
-  <div class="dialog-content">
-    <span>确认退出登录吗？</span>
-  </div>
-  <template #footer>
-    <div class="dialog-footer">
-      <el-button @click="outerVisible = false" class="cancel-btn">取消</el-button>
-      <el-button type="primary" @click="handleLogout" class="confirm-btn">
-        确认退出
-      </el-button>
+    <div class="dialog-content">
+      <span>确认退出登录吗？</span>
     </div>
-  </template>
-</el-dialog>
-
-
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="outerVisible = false" class="cancel-btn">取消</el-button>
+        <el-button type="primary" @click="handleLogout" class="confirm-btn">
+          确认退出
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
+
 
 <script lang="ts" setup>
 import { ref } from 'vue'
@@ -84,18 +108,37 @@ import { ElMessage } from 'element-plus' // 导入 ElMessage 组件
 import axios from 'axios' // 导入 axios 库
 import PersonalBox from '@/views/Framework/components/PersonalBox.vue' // 导入 PersonalBox 组件
 import PersonalText from '@/views/Framework/components/PersonalText.vue'
-const token = localStorage.getItem('token')
+
+// 父组件的消息
+const roleMessage = ref('资助对象')
+
+const token = localStorage.getItem('token') 
+const role =localStorage.getItem('role');
+
 // 模态框
 const outerVisible = ref(false)
 // 当前选中的菜单项
 const activeMenu = ref('1') // 默认选中 "个人中心"
 const currentPage = ref('personalCenter') // 默认显示 个人中心
 
+// 当前用户角色
+
+
+// 监听子组件传递的角色信息
+
+
 // 点击菜单项时的处理函数
-const handleMenuClick = (page:string) => {
-  if(page=='superMarket')window.location.href = 'http://localhost:5175/home'
-  else if(page=='personalProfile')window.location.href = 'http://localhost:5173/growthfile'
+const handleMenuClick = (page: string) => {
+  if (page === 'superMarket'){
+    window.location.href = `http://localhost:5174/home?token=${token}&role=${role}`
+  }
+  else if (page === 'personalProfile') {
+    window.location.href = `http://localhost:5175/new-file?token=${token}&role=${role}`
+  }
+  else if(page === 'studentsProfile')window.location.href = `http://localhost:5175/studentFiles?token=${token}&role=${role}`
+  else if(page === 'superMarketManage')window.location.href = `http://localhost:5174/manage?token=${token}&role=${role}`
 }
+
 // 模态框关闭时执行的回调
 const handleBeforeClose = (done: Function) => {
   done() // 关闭模态框
@@ -108,28 +151,41 @@ const handleLogout = async () => {
     const response = await axios.post('http://106.54.24.243:8080/auth/logout', {
       headers: {
         Authorization: `Bearer ${token}`,
-        clientid:'e5cd7e4891bf95d1d19206ce24a7b32e',
+        clientid: 'e5cd7e4891bf95d1d19206ce24a7b32e',
       },
     })
     if (response.data.code === 200) {
-      ElMessage.success('退出成功！');
-      outerVisible.value = false 
-      localStorage.removeItem('token') 
+      ElMessage.success('退出成功！')
+      outerVisible.value = false
+      localStorage.removeItem('token')
+      localStorage.removeItem('role');
       // 等待2秒跳转到登录
-       setTimeout(() => {
-         window.location.href = '/' 
-          outerVisible.value = false
-       }, 500);
+      setTimeout(() => {
+        window.location.href = '/'
+        outerVisible.value = false
+      }, 500)
     } else {
-      ElMessage.error(response.data.msg+'!');
+      ElMessage.error(response.data.msg + '!')
     }
   } catch (error) {
-    ElMessage.error('请求失败！');
+    ElMessage.error('请求失败！')
   }
 }
+// 页面关闭删除token
+import { onBeforeUnmount} from 'vue';
+onBeforeUnmount(() => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('client_id') 
+  localStorage.removeItem('role')
+  console.log('Token has been removed from localStorage');
+});
+
 </script>
 
 <style scoped>
+.content{
+  display: flex;
+}
 /* 顶部导航栏 */
 .layout-container-demo .el-header {
   background-color: white;
@@ -223,7 +279,6 @@ const handleLogout = async () => {
   padding: 20px;
   background-color: #f4f4f4; /* 浅灰色背景 */
 }
-
 /* 工具栏 */
 .layout-container-demo .toolbar {
   display: flex;

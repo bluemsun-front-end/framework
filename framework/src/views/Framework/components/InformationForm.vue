@@ -1,3 +1,4 @@
+
 <template>
   <div class="form-container" v-if="studentInfo">
     <h2>学生信息</h2>
@@ -69,6 +70,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { defineEmits } from 'vue'
+const emit = defineEmits(['roleName'])
 
 const studentInfo = ref(null) // 存储学生信息
 // 默认数据（用于接口未调用时展示）
@@ -98,6 +101,7 @@ const fetchStudentInfo = async () => {
       },
     })
     studentInfo.value = response.data.data.fundUserInfo
+    emit('roleName', response.data.data.roleGroup)
   } catch (error) {
     console.error('获取学生信息失败:', error)
     studentInfo.value = defaultStudentInfo // 如果接口调用失败，使用默认数据
