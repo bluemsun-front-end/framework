@@ -49,7 +49,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log('每次路由切换时执行的函数')
 
   next()
 })

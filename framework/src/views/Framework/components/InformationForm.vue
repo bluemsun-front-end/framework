@@ -1,3 +1,4 @@
+
 <template>
   <div class="form-container" v-if="studentInfo">
     <h2>学生信息</h2>

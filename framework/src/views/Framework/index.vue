@@ -5,7 +5,7 @@
       <el-scrollbar style="height: 100%">
         <el-menu :default-active="activeMenu" :default-openeds="['1']" class="sidebar-menu">
           <!-- 侧边栏标题 -->
-          <div index="0" class="sidebar-title" disabled>{{currentRole}}-导航</div>
+          <div index="0" class="sidebar-title" disabled>{{ role }}-导航</div>
 
           <!-- 个人中心 -->
           <el-menu-item
@@ -18,7 +18,7 @@
 
           <!-- 爱心超市 -->
           <el-menu-item
-            v-show="currentRole == '资助对象'|| currentRole == '超级管理员'"
+            v-show="role == '资助对象' || role == '超级管理员'"
             index="2"
             @click="handleMenuClick('superMarket')"
             :class="{ active: currentPage === 'superMarket' }"
@@ -28,7 +28,7 @@
           </el-menu-item>
           <!-- 超市管理员 -->
           <el-menu-item
-            v-show="currentRole == '超市管理员'||currentRole == '超级管理员'"
+            v-show="role == '超市管理员' || role == '超级管理员'"
             index="3"
             @click="handleMenuClick('superMarketManage')"
             :class="{ active: currentPage === 'superMarketManage' }"
@@ -39,7 +39,7 @@
 
           <!-- 个人档案 -->
           <el-menu-item
-            v-show="currentRole == '资助对象'||currentRole == '超级管理员'"
+            v-show="role == '资助对象' || role == '超级管理员'"
             index="4"
             @click="handleMenuClick('personalProfile')"
             :class="{ active: currentPage === 'personalProfile' }"
@@ -47,10 +47,10 @@
           >
             个人档案
           </el-menu-item>
-          
+
           <!-- 个人档案管理员端 -->
           <el-menu-item
-            v-show="currentRole == '老师'||currentRole == '超级管理员'"
+            v-show="role == '老师' || role == '超级管理员'"
             index="5"
             @click="handleMenuClick('studentsProfile')"
             :class="{ active: currentPage === 'studentsProfile' }"
@@ -94,14 +94,11 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="outerVisible = false" class="cancel-btn">取消</el-button>
-        <el-button type="primary" @click="handleLogout" class="confirm-btn">
-          确认退出
-        </el-button>
+        <el-button type="primary" @click="handleLogout" class="confirm-btn"> 确认退出 </el-button>
       </div>
     </template>
   </el-dialog>
 </template>
-
 
 <script lang="ts" setup>
 import { ref } from 'vue'
@@ -111,9 +108,10 @@ import PersonalBox from '@/views/Framework/components/PersonalBox.vue' // 导入
 import PersonalText from '@/views/Framework/components/PersonalText.vue'
 
 // 父组件的消息
-// const roleMessage = ref('')
+const roleMessage = ref('资助对象')
 
 const token = localStorage.getItem('token')
+const role = localStorage.getItem('role')
 
 // 模态框
 const outerVisible = ref(false)
@@ -122,25 +120,19 @@ const activeMenu = ref('1') // 默认选中 "个人中心"
 const currentPage = ref('personalCenter') // 默认显示 个人中心
 
 // 当前用户角色
-// const currentRole = ref('')
-const currentRole = localStorage.getItem('role');
+
 // 监听子组件传递的角色信息
-// const updateRole = (role: string) => {
-//   currentRole.value = role
-//   roleMessage.value = role
-//   console.log('接收到角色信息:', role)
-// }
 
 // 点击菜单项时的处理函数
 const handleMenuClick = (page: string) => {
-  if (page == 'superMarket'){
-    window.location.href = `http://localhost:5174/home?token=${token}}`
-  }
-  else if (page == 'personalProfile') {
-    window.location.href = `http://localhost:5175/new-file?token=${token}`
-  }
-  else if(page == 'studentsProfile')window.location.href = `http://localhost:5175/studentFiles?token=${token}`
-  else if(page == 'superMarketManage')window.location.href = `http://localhost:5174/manage?token=${token}}`
+  if (page === 'superMarket') {
+    window.location.href = `http://localhost:5174/home?token=${token}&role=${role}`
+  } else if (page === 'personalProfile') {
+    window.location.href = `http://localhost:5175/new-file?token=${token}&role=${role}`
+  } else if (page === 'studentsProfile')
+    window.location.href = `http://localhost:5175/studentFiles?token=${token}&role=${role}`
+  else if (page === 'superMarketManage')
+    window.location.href = `http://localhost:5174/manage?token=${token}&role=${role}`
 }
 
 // 模态框关闭时执行的回调
@@ -177,17 +169,17 @@ const handleLogout = async () => {
   }
 }
 // 页面关闭删除token
-import { onBeforeUnmount} from 'vue';
+import { onBeforeUnmount } from 'vue'
 onBeforeUnmount(() => {
-  localStorage.removeItem('token');
+  localStorage.removeItem('token')
   localStorage.removeItem('client_id')
-  console.log('Token has been removed from localStorage');
-});
-
+  localStorage.removeItem('role')
+  console.log('Token has been removed from localStorage')
+})
 </script>
 
 <style scoped>
-.content{
+.content {
   display: flex;
 }
 /* 顶部导航栏 */
@@ -198,12 +190,12 @@ onBeforeUnmount(() => {
 }
 .title {
   color: #2d4059;
-  font-family: 'Arial', sans-serif; 
-  font-size: 30px; 
+  font-family: 'Arial', sans-serif;
+  font-size: 30px;
   font-weight: bold;
   /* margin-top: 10px;
   margin-bottom: 10px; */
-  margin:10px auto;
+  margin: 10px auto;
   text-align: center;
   align-content: center;
   letter-spacing: 0.1em;
@@ -233,17 +225,15 @@ onBeforeUnmount(() => {
 
 /* 侧边栏菜单项 */
 .menu-item {
-  font-weight:700;
+  font-weight: 700;
   font-size: 14px;
-  color: #bdc3c7; 
+  color: #bdc3c7;
   padding-left: 20px;
   background-color: #283142; /* 默认背景透明，与侧边栏背景一致 */
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
-:deep(.el-menu){
-  border:0;
+:deep(.el-menu) {
+  border: 0;
 }
 
 /* 鼠标悬停时的菜单项颜色变化 */
@@ -255,8 +245,8 @@ onBeforeUnmount(() => {
 
 /* 选中时的菜单项样式 */
 .menu-item.active {
-  background-color: #3498db; 
-  color: white; 
+  background-color: #3498db;
+  color: white;
 }
 
 /* 退出登录按钮 */
@@ -266,9 +256,7 @@ onBeforeUnmount(() => {
   color: #e74c3c; /* 红色字体 */
   padding-left: 20px;
   background-color: #283142; /* 透明背景，与侧边栏背景一致**/
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* 退出登录按钮悬停效果 */
@@ -358,12 +346,10 @@ onBeforeUnmount(() => {
 
 .dialog-content {
   display: flex;
-  justify-content: center; 
-  align-items: center;    
-  height: 100%;            
-  font-size: 16px;  
-  color: #333;  
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 16px;
+  color: #333;
 }
-
-
 </style>
