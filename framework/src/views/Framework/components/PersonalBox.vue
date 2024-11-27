@@ -46,14 +46,14 @@
           <i class="iconfont icon-role"></i>
           <span><strong>角色:</strong> {{ role }}</span>
         </div>
-        <div class="info-item">
+        <!-- <div class="info-item">
           <i class="iconfont icon-phonenumber"></i>
           <span><strong>手机号:</strong> {{ phonenumber }}</span>
         </div>
         <div class="info-item">
           <i class="iconfont icon-email"></i>
           <span><strong>邮箱:</strong> {{ email }}</span>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -84,8 +84,8 @@ const studentId = ref('')
 const sex = ref('')
 const deptName = ref('')
 const role = ref('')
-const phonenumber = ref('')
-const email = ref('')
+// const phonenumber = ref('')
+// const email = ref('')
 
 // token（根据需要获取动态设置或传入）
 const token = localStorage.getItem('token')
@@ -111,8 +111,8 @@ const fetchUserInfo = async () => {
     sex.value = data.value.sex || '未知'
     deptName.value = data.value.deptName || '未知'
     role.value = data.value.roles[0].roleName || '未知'
-    phonenumber.value = data.value.phonenumber || '未知'
-    email.value = data.value.email || '未知'
+    // phonenumber.value = data.value.phonenumber || '未知'
+    // email.value = data.value.email || '未知'
     // 把role传递给父组件
     // console.log(data.value.roles[0].roleName);
     // emit('role', data.value.roles[0].roleName||'未知')
