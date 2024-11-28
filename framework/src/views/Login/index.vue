@@ -35,7 +35,8 @@ import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import { ElForm, ElFormItem, ElInput, ElButton, ElCheckbox, ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { User,Unlock } from '@element-plus/icons-vue'
+import { User, Unlock } from '@element-plus/icons-vue'
+import isLogin from '@/api/isLogin'
 
 const router = useRouter()
 // 表单数据和状态
@@ -44,33 +45,61 @@ const password = ref('')
 const remenber = ref(true)
 const loading = ref(false)
 const clientId = ref('')
+const token = localStorage.getItem('token')
+const role = localStorage.getItem('role')
 const redirect = router.currentRoute.value.query.redirect
 // 判断是电脑端还是移动端
 let isPc = true
-const isPC = () => {
+const detectDevice = () => {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera
-  // 定义一些常见的移动设备和浏览器的用户代理特征
+
+  if (/ipad/i.test(userAgent)) {
+    return 'tablet' // 平板
+  }
+
   const mobileAgents = [
-    /android/i, // Android设备
-    /iphone|ipad|ipod/i, // iOS设备
-    /windows phone/i, // Windows Phone设备
-    /blackberry/i, // Blackberry设备
-    /opera mini/i, // Opera Mini浏览器（通常用于移动设备）
-    /mobile/i, // 通用移动设备标记
-    /touch/i, // 触摸设备标记（可能包括桌面触摸屏）
+    /android/i,
+    /iphone|ipod/i,
+    /windows phone/i,
+    /blackberry/i,
+    /opera mini/i,
+    /mobile/i,
+    /touch/i,
   ]
-  // 检查用户代理字符串是否包含任何移动设备的特征
-  isPc = true
+
   for (let i = 0; i < mobileAgents.length; i++) {
     if (mobileAgents[i].test(userAgent)) {
-      isPc = false // 如果是移动设备，则返回false
+      return 'mobile' // 移动设备
     }
   }
+
+  // 特性检测
+  if (navigator.maxTouchPoints > 0 || 'ontouchstart' in window) {
+    return 'tablet' // 触摸屏设备大多是平板
+  }
+
+  return 'pc' // 默认是 PC
+}
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-onMounted(() => {
-  isPC()
+onMounted(async () => {
+  detectDevice()
+  const isLoggedin = await isLogin()
+  if (!isLoggedin) {
+    console.log('first')
+    localStorage.removeItem('role')
+    localStorage.removeItem('token')
+
+    console.log('结束')
+  }
+  if (redirect && token && role) {
+    console.log('redirect', redirect)
+    window.location.href = `${redirect}?token=${token}&role=${role}`
+  }
 })
+
 const log = async () => {
   try {
     loading.value = true
@@ -80,6 +109,7 @@ const log = async () => {
     } else {
       clientId.value = 'e5cd7e4891bf95d1d19206ce24a7b32e'
     }
+
     const response = await axios.post('http://106.54.24.243:8080/auth/login', {
       tenantId: '000000',
       username: uname.value,
@@ -88,7 +118,6 @@ const log = async () => {
       clientId: clientId.value,
       grantType: 'password',
     })
-    console.log(response.data.data.roles[0].roleName === '超市管理员')
 
     if (response.data.code === 200) {
       ElMessage.success('登录成功')
@@ -97,26 +126,14 @@ const log = async () => {
       console.log('response.data是', response.data.data.roles[0].roleName)
       //判断是否有回调参数
       localStorage.setItem('role', response.data.data.roles[0].roleName)
+
       if (redirect) {
-        const res = await axios.get(
-          `http://106.54.24.243:8080/auth/redirect?path=${redirect}&token=${response.data.data.access_token}`,
-          {
-            headers: {
-              Authorization: `Bearer ${response.data.data.access_token}`,
-              clientid: 'e5cd7e4891bf95d1d19206ce24a7b32e',
-            },
+        console.log('role是', role)
 
-            //   localStorage.setItem('role',response.data.data.roles[0].roleName)
-
-            //   // 判断对象
-            //   router.push('/framework')
-          }
-          // },
-        )
-        if (res.data.code === 200) {
-          window.location.href = `${redirect}?token=${response.data.data.access_token}`
-        }
+        window.location.href = `${redirect}?token=${response.data.data.access_token}&role=${response.data.data.roles[0].roleName}`
       }
+
+      // }
 
       router.push('/framework')
     } else {

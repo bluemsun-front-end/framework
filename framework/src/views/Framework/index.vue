@@ -39,7 +39,7 @@
 
           <!-- 个人档案 -->
           <el-menu-item
-            v-show="role == '资助对象' "
+            v-show="role == '资助对象'"
             index="4"
             @click="handleMenuClick('personalProfile')"
             :class="{ active: currentPage === 'personalProfile' }"
@@ -106,8 +106,7 @@ import { ElMessage } from 'element-plus' // 导入 ElMessage 组件
 import axios from 'axios' // 导入 axios 库
 import PersonalBox from '@/views/Framework/components/PersonalBox.vue' // 导入 PersonalBox 组件
 import PersonalText from '@/views/Framework/components/PersonalText.vue'
-
-// 父组件的消息
+import Axios from '@/views/Axios'
 const roleMessage = ref('资助对象')
 
 const token = localStorage.getItem('token')
@@ -119,6 +118,9 @@ const outerVisible = ref(false)
 const activeMenu = ref('1') // 默认选中 "个人中心"
 const currentPage = ref('personalCenter') // 默认显示 个人中心
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 // 当前用户角色
 
 // 监听子组件传递的角色信息
@@ -144,18 +146,14 @@ const handleBeforeClose = (done: Function) => {
 const handleLogout = async () => {
   console.log('退出登录')
   try {
-    const response = await axios.post('http://106.54.24.243:8080/auth/logout', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        clientid: 'e5cd7e4891bf95d1d19206ce24a7b32e',
-      },
-    })
+    const response = await Axios.post('http://106.54.24.243:8080/auth/logout', {})
     if (response.data.code === 200) {
       ElMessage.success('退出成功！')
       outerVisible.value = false
       localStorage.removeItem('token')
       localStorage.removeItem('role')
       localStorage.removeItem('client_id')
+
       // 等待2秒跳转到登录
       setTimeout(() => {
         window.location.href = '/'
@@ -170,12 +168,12 @@ const handleLogout = async () => {
 }
 // 页面关闭删除token
 import { onBeforeUnmount } from 'vue'
-onBeforeUnmount(() => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('client_id')
-  localStorage.removeItem('role')
-  console.log('Token has been removed from localStorage')
-})
+// onBeforeUnmount(() => {
+//   localStorage.removeItem('token')
+//   localStorage.removeItem('client_id')
+//   localStorage.removeItem('role')
+//   console.log('Token has been removed from localStorage')
+// })
 </script>
 
 <style scoped>
