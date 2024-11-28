@@ -1,3 +1,4 @@
+
 <template>
   <div class="profile-container">
     <div class="profile-box">
@@ -34,10 +35,10 @@
           <i class="iconfont icon-studentId "></i>
           <span><strong>学号:</strong> {{ studentId }}</span>
         </div>
-        <div class="info-item">
+        <!-- <div class="info-item">
           <i class="iconfont icon-sex"></i>
           <span><strong>性别:</strong> {{ sex }}</span>
-        </div>
+        </div> -->
         <div class="info-item">
           <i class="iconfont icon-deptName"></i>
           <span><strong>校区:</strong> {{ deptName }}</span>
@@ -46,14 +47,14 @@
           <i class="iconfont icon-role"></i>
           <span><strong>角色:</strong> {{ role }}</span>
         </div>
-        <div class="info-item">
+        <!-- <div class="info-item">
           <i class="iconfont icon-phonenumber"></i>
           <span><strong>手机号:</strong> {{ phonenumber }}</span>
         </div>
         <div class="info-item">
           <i class="iconfont icon-email"></i>
           <span><strong>邮箱:</strong> {{ email }}</span>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -68,6 +69,9 @@ import axios from 'axios'
 import { onMounted } from 'vue'
 import { reactive, toRefs } from 'vue'
 import { ElMessage } from 'element-plus'
+// import { defineEmits } from 'vue'
+// const emit = defineEmits(['role'])
+
 
 const state = reactive({
   circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
@@ -78,11 +82,11 @@ const { circleUrl,isHover } = toRefs(state)
 // 定义数据绑定的变量
 const name = ref('')
 const studentId = ref('')
-const sex = ref('')
+//const sex = ref('')
 const deptName = ref('')
 const role = ref('')
-const phonenumber = ref('')
-const email = ref('')
+// const phonenumber = ref('')
+// const email = ref('')
 
 // token（根据需要获取动态设置或传入）
 const token = localStorage.getItem('token')
@@ -105,11 +109,15 @@ const fetchUserInfo = async () => {
     circleUrl.value = data.value.avatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
     name.value = data.value.nickName || '未知'
     studentId.value = data.value.userName || '未知'
-    sex.value = data.value.sex || '未知'
+    // sex.value = data.value.sex || '未知'
     deptName.value = data.value.deptName || '未知'
     role.value = data.value.roles[0].roleName || '未知'
-    phonenumber.value = data.value.phonenumber || '未知'
-    email.value = data.value.email || '未知'
+    // phonenumber.value = data.value.phonenumber || '未知'
+    // email.value = data.value.email || '未知'
+    // 把role传递给父组件
+    // console.log(data.value.roles[0].roleName);
+    // emit('role', data.value.roles[0].roleName||'未知')
+
   } catch (error) {
     console.error('获取用户信息失败', error)
   }
