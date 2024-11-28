@@ -39,7 +39,7 @@
 
           <!-- 个人档案 -->
           <el-menu-item
-            v-show="role == '资助对象' || role == '超级管理员'"
+            v-show="role == '资助对象' "
             index="4"
             @click="handleMenuClick('personalProfile')"
             :class="{ active: currentPage === 'personalProfile' }"

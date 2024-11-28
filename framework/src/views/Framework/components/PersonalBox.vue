@@ -34,10 +34,10 @@
           <i class="iconfont icon-studentId "></i>
           <span><strong>学号:</strong> {{ studentId }}</span>
         </div>
-        <div class="info-item">
+        <!-- <div class="info-item">
           <i class="iconfont icon-sex"></i>
           <span><strong>性别:</strong> {{ sex }}</span>
-        </div>
+        </div> -->
         <div class="info-item">
           <i class="iconfont icon-deptName"></i>
           <span><strong>校区:</strong> {{ deptName }}</span>
@@ -81,7 +81,7 @@ const { circleUrl,isHover } = toRefs(state)
 // 定义数据绑定的变量
 const name = ref('')
 const studentId = ref('')
-const sex = ref('')
+//const sex = ref('')
 const deptName = ref('')
 const role = ref('')
 // const phonenumber = ref('')
@@ -108,7 +108,7 @@ const fetchUserInfo = async () => {
     circleUrl.value = data.value.avatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
     name.value = data.value.nickName || '未知'
     studentId.value = data.value.userName || '未知'
-    sex.value = data.value.sex || '未知'
+    // sex.value = data.value.sex || '未知'
     deptName.value = data.value.deptName || '未知'
     role.value = data.value.roles[0].roleName || '未知'
     // phonenumber.value = data.value.phonenumber || '未知'
