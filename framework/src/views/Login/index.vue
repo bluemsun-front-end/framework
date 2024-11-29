@@ -80,21 +80,19 @@ const detectDevice = () => {
 
   return 'pc'; // 默认是 PC
 };
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+
 
 onMounted(async() => { 
 
   detectDevice();
  const isLoggedin=await isLogin();
   if(!isLoggedin)
-  { console.log('first')
+  {     
     localStorage.removeItem('role')
     localStorage.removeItem('token')
- 
-    console.log('结束')
-  }
+  }    
+    
+
   if(redirect&&token&&role)
     {  
       console.log('redirect', redirect)

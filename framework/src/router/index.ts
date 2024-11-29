@@ -7,6 +7,7 @@ import PersonalText from '@/views/Framework/components/PersonalText.vue'
 import InformationForm from '@/views/Framework/components/InformationForm.vue'
 import PasswordForm from '@/views/Framework/components/PasswordForm.vue'
 import isLogin from '@/api/isLogin'
+import NotFoundView from '@/components/views/NotFoundView.vue';
 //创建路由器
 const router = createRouter({
   history: createWebHistory(),
@@ -48,6 +49,11 @@ const router = createRouter({
       path: '/passwordForm',
       name: 'passwordForm',
       component: PasswordForm,
+    },
+    {
+      path: '/:pathMatch(.*)*', // 匹配所有未定义的路由
+      name: 'NotFound',
+      component: NotFoundView,
     },
   ],
 })

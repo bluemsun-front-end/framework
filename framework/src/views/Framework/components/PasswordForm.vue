@@ -70,6 +70,7 @@ import { ref } from 'vue'
 import { ElForm, ElFormItem, ElInput, ElButton, ElIcon, ElMessage } from 'element-plus'
 import { View, Hide } from '@element-plus/icons-vue'
 import axios from 'axios'
+import Axios from 'axios'
 
 // 获取对表单的引用
 const formRef = ref(null) // 这里定义 formRef
@@ -112,7 +113,6 @@ const rules = ref({
     { validator: confirmPasswordValidator, trigger: 'blur' },
   ],
 })
-
 // 重置密码
 const resetPassword = async (oldPassword, newPassword) => {
   try {

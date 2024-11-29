@@ -18,7 +18,7 @@
 
           <!-- 爱心超市 -->
           <el-menu-item
-            v-show="role == '资助对象' || role == '超级管理员'"
+            v-show="role == '资助对象'"
             index="2"
             @click="handleMenuClick('superMarket')"
             :class="{ active: currentPage === 'superMarket' }"
@@ -28,7 +28,7 @@
           </el-menu-item>
           <!-- 超市管理员 -->
           <el-menu-item
-            v-show="role == '超市管理员' || role == '超级管理员'"
+            v-show="role == '超市管理员'"
             index="3"
             @click="handleMenuClick('superMarketManage')"
             :class="{ active: currentPage === 'superMarketManage' }"
@@ -39,7 +39,7 @@
 
           <!-- 个人档案 -->
           <el-menu-item
-            v-show="role == '资助对象' "
+            v-show="role == '资助对象'"
             index="4"
             @click="handleMenuClick('personalProfile')"
             :class="{ active: currentPage === 'personalProfile' }"
@@ -50,7 +50,7 @@
 
           <!-- 个人档案管理员端 -->
           <el-menu-item
-            v-show="role == '老师' || role == '超级管理员'"
+            v-show="role == '老师'"
             index="5"
             @click="handleMenuClick('studentsProfile')"
             :class="{ active: currentPage === 'studentsProfile' }"
@@ -118,9 +118,7 @@ const outerVisible = ref(false)
 const activeMenu = ref('1') // 默认选中 "个人中心"
 const currentPage = ref('personalCenter') // 默认显示 个人中心
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+
 // 当前用户角色
 
 // 监听子组件传递的角色信息
@@ -146,16 +144,14 @@ const handleBeforeClose = (done: Function) => {
 const handleLogout = async () => {
   console.log('退出登录')
   try {
-    const response = await Axios.post('http://106.54.24.243:8080/auth/logout', {
-      
-    })
+    const response = await Axios.post('http://106.54.24.243:8080/auth/logout', {})
     if (response.data.code === 200) {
       ElMessage.success('退出成功！')
       outerVisible.value = false
       localStorage.removeItem('token')
       localStorage.removeItem('role')
       localStorage.removeItem('client_id')
-  
+
       // 等待2秒跳转到登录
       setTimeout(() => {
         window.location.href = '/'
@@ -175,8 +171,7 @@ import { onBeforeUnmount } from 'vue'
 //   localStorage.removeItem('client_id')
 //   localStorage.removeItem('role')
 //   console.log('Token has been removed from localStorage')
-// }) 
-
+// })
 </script>
 
 <style scoped>
