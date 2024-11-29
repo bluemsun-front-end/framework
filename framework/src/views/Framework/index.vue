@@ -18,7 +18,7 @@
 
           <!-- 爱心超市 -->
           <el-menu-item
-            v-show="role == '资助对象' || role == '超级管理员'"
+            v-show="role == '资助对象'"
             index="2"
             @click="handleMenuClick('superMarket')"
             :class="{ active: currentPage === 'superMarket' }"
@@ -28,7 +28,7 @@
           </el-menu-item>
           <!-- 超市管理员 -->
           <el-menu-item
-            v-show="role == '超市管理员' || role == '超级管理员'"
+            v-show="role == '超市管理员'"
             index="3"
             @click="handleMenuClick('superMarketManage')"
             :class="{ active: currentPage === 'superMarketManage' }"
@@ -50,7 +50,7 @@
 
           <!-- 个人档案管理员端 -->
           <el-menu-item
-            v-show="role == '老师' || role == '超级管理员'"
+            v-show="role == '老师'"
             index="5"
             @click="handleMenuClick('studentsProfile')"
             :class="{ active: currentPage === 'studentsProfile' }"
