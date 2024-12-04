@@ -23,7 +23,7 @@
           <div class="btn"><button class="log" @click.prevent="log">登录</button></div>
         </div>
         <div class="form_right">
-          <img src="./../../../image/登录背景小图.jpg" alt="" width="100%" height="100%" />
+          <img src="./imag/登录背景小图.jpg" alt="" width="100%" height="100%" />
         </div>
       </form>
     </div>
@@ -44,61 +44,70 @@ const uname = ref('')
 const password = ref('')
 const remenber = ref(true)
 const loading = ref(false)
-const clientId = ref('')
+// const clientId = ref('')
 const token=localStorage.getItem('token');
 const role =localStorage.getItem('role')
 const redirect = router.currentRoute.value.query.redirect
-// 判断是电脑端还是移动端
-let isPc = true
-const detectDevice = () => {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+// 定义一个响应式变量来存储客户端ID
+const clientId = ref('');
+// 定义一个变量来判断是电脑端还是移动端
+let isPc = true;
+// 定义一个函数来判断是否是电脑端
+const isPC = () => {
+  const userAgent = navigator.userAgent;
 
-  if (/ipad/i.test(userAgent)) {
-    return 'tablet'; // 平板
-  }
-
+  // 定义一些常见的移动设备和浏览器的用户代理特征
   const mobileAgents = [
-    /android/i,
-    /iphone|ipod/i,
-    /windows phone/i,
-    /blackberry/i,
-    /opera mini/i,
-    /mobile/i,
-    /touch/i,
+    /android/i,     // Android设备
+    /iphone|ipad|ipod/i, // iOS设备
+    /windows phone/i, // Windows Phone设备
+    /blackberry/i,  // Blackberry设备
+    /opera mini/i,  // Opera Mini浏览器（通常用于移动设备）
+    /mobile/i,      // 通用移动设备标记
+    /touch/i        // 触摸设备标记（可能包括桌面触摸屏）
   ];
 
+  // 初始化isPc为true
+  isPc = true;
+
+  // 检查用户代理字符串是否包含任何移动设备的特征
   for (let i = 0; i < mobileAgents.length; i++) {
     if (mobileAgents[i].test(userAgent)) {
-      return 'mobile'; // 移动设备
+      isPc = false; // 如果是移动设备，则将isPc设置为false
     }
   }
-
-  // 特性检测
-  if (navigator.maxTouchPoints > 0 || 'ontouchstart' in window) {
-    return 'tablet'; // 触摸屏设备大多是平板
-  }
-
-  return 'pc'; // 默认是 PC
+  console.log(isPc);
+      //改变clientId查看是移动端还是PC端
+    if (isPc == false) {
+      clientId.value = '428a8310cd442757ae699df5d894f051'
+    } else {
+      clientId.value = 'e5cd7e4891bf95d1d19206ce24a7b32e'
+    }
+ localStorage.setItem('client_id',clientId.value)
 };
 
 
-onMounted(async() => { 
-
-  detectDevice();
+onMounted(
+async() => {
+   isPC()
  const isLoggedin=await isLogin();
   if(!isLoggedin)
-  {     
+  {
     localStorage.removeItem('role')
     localStorage.removeItem('token')
-  }    
-    
+  }
 
-  if(redirect&&token&&role)
-    {  
-      console.log('redirect', redirect)
-       window.location.href = `${redirect}?token=${token}&role=${role}`
-    }
-}) 
+  if(!redirect){
+    router.push('/framework')
+  }
+
+
+  if (token && role&&redirect) { 
+        window.location.href = `${redirect}?token=${token}&role=${role}`
+     
+  }
+ 
+})
 
 
 
@@ -107,15 +116,6 @@ onMounted(async() => {
 const log = async () => {
   try {
     loading.value = true
-    //改变clientId查看是移动端还是PC端
-    if (isPc === false) {
-      clientId.value = '428a8310cd442757ae699df5d894f051'
-    } else {
-      clientId.value = 'e5cd7e4891bf95d1d19206ce24a7b32e'
-    } 
-    
-    
-
 
     const response = await axios.post('http://106.54.24.243:8080/auth/login', {
       tenantId: '000000',
@@ -131,7 +131,6 @@ const log = async () => {
     if (response.data.code === 200) {
       ElMessage.success('登录成功')
       localStorage.setItem('token', response.data.data.access_token)
-      localStorage.setItem('client_id', response.data.data.client_id)
       console.log('response.data是', response.data.data.roles[0].roleName)
       //判断是否有回调参数
       localStorage.setItem('role', response.data.data.roles[0].roleName)
@@ -139,11 +138,11 @@ const log = async () => {
       if (redirect)
     {
       console.log('role是', role);
-      
+
       window.location.href = `${redirect}?token=${response.data.data.access_token}&role=${response.data.data.roles[0].roleName}`
     }
-      
-   
+
+
       // }
 
       router.push('/framework')
@@ -210,7 +209,7 @@ input[type='text']:focus {
 .container {
   width: 100vw;
   height: 100vh;
-  background: url(./../../../image/登录背景.png) fixed no-repeat;
+  background: url(./imag/登录背景.png) fixed no-repeat;
   background-size: cover;
   display: flex;
   /* 交叉轴：竖直 */

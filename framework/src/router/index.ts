@@ -68,7 +68,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (!isLoggedIn && !publicPaths.includes(to.path)) {
       const redirectUrl = `${window.location.origin}${to.fullPath}`;
-      return (window.location.href = `http://localhost:5173`);
+      return (window.location.href = `http://106.54.24.243:5173`);
     }
 
     next(); // 继续导航

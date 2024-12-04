@@ -126,13 +126,13 @@ const currentPage = ref('personalCenter') // 默认显示 个人中心
 // 点击菜单项时的处理函数
 const handleMenuClick = (page: string) => {
   if (page === 'superMarket') {
-    window.location.href = `http://localhost:5174/home?token=${token}&role=${role}`
+    window.location.href = `http://106.54.24.243:5174/home?token=${token}&role=${role}`
   } else if (page === 'personalProfile') {
-    window.location.href = `http://localhost:5175/new-file?token=${token}&role=${role}`
+    window.location.href = `http://106.54.24.243:5175/new-file?token=${token}&role=${role}`
   } else if (page === 'studentsProfile')
-    window.location.href = `http://localhost:5175/studentFiles?token=${token}&role=${role}`
+    window.location.href = `http://106.54.24.243:5175/studentFiles?token=${token}&role=${role}`
   else if (page === 'superMarketManage')
-    window.location.href = `http://localhost:5174/manage?token=${token}&role=${role}`
+    window.location.href = `http://106.54.24.243:5174/manage?token=${token}&role=${role}`
 }
 
 // 模态框关闭时执行的回调
